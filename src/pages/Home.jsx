@@ -17,7 +17,7 @@ const Home = () => {
       <Wrapper />
       <Section
         title="Big Discount"
-        bgColor="#f6f9fc"
+        bgColor="white"
         productItems={discoutProducts}
       />
       <Section
@@ -25,7 +25,10 @@ const Home = () => {
         bgColor="white"
         productItems={newArrivalData}
       />
-      <Section title="Best Sales" bgColor="#f6f9fc" productItems={bestSales} />
+      <Section 
+        title="Best Sales" 
+        bgColor="white" 
+        productItems={bestSales} />
     </Fragment>
   );
 };

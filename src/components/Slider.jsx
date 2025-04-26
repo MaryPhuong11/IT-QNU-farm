@@ -7,7 +7,6 @@ import { SliderData } from "../utils/products"
 
 const SliderHome = () => {
   const settings = {
-    nav:false,
     infinite: true,
     slidesToShow: 1,
     slidesToScroll: 1,
