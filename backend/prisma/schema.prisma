@@ -1,0 +1,29 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql" // hoặc "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Category {
+  id       Int       @id @default(autoincrement())
+  name     String    @unique
+  products Product[] // 1 category - N products
+}
+
+model Product {
+  id          Int      @id @default(autoincrement()) // Sửa lại id để tự động tạo
+  productName String
+  imgUrl      String?
+  price       Decimal
+  shortDesc   String?
+  description String?
+
+  // Foreign key
+  categoryId  Int
+  category    Category @relation(fields: [categoryId], references: [id])
+
+  @@map("products") // Tên bảng thật trong MySQL
+}
