@@ -7,43 +7,52 @@ import "./product-details.css";
 
 const ProductDetails = ({ selectedProduct }) => {
   const dispatch = useDispatch();
-
   const [quantity, setQuantity] = useState(1);
+
   const handleQuantityChange = (e) => {
     setQuantity(e.target.value);
   };
+
   const handelAdd = (selectedProduct, quantity) => {
     dispatch(addToCart({ product: selectedProduct, num: quantity }));
     toast.success("Product has been added to cart!");
   };
+
+  if (!selectedProduct) return null;
 
   return (
     <section className="product-page">
       <Container>
         <Row className="justify-content-center">
           <Col md={6}>
-            <img loading="lazy" src={selectedProduct?.imgUrl} alt="" />
+            <img 
+              loading="lazy" 
+              src={selectedProduct.imgUrl || '/placeholder.png'} 
+              alt={selectedProduct.productName} 
+            />
           </Col>
           <Col md={6}>
-            <h2>{selectedProduct?.productName}</h2>
+            <h2>{selectedProduct.productName}</h2>
             <div className="rate">
               <div className="stars">
-                <i className="fa fa-star"></i>
-                <i className="fa fa-star"></i>
-                <i className="fa fa-star"></i>
-                <i className="fa fa-star"></i>
-                <i className="fa fa-star"></i>
+                {[...Array(5)].map((_, index) => (
+                  <i 
+                    key={index} 
+                    className={`fa fa-star ${index < Math.round(selectedProduct.avgRating) ? 'active' : ''}`}
+                  ></i>
+                ))}
               </div>
-              <span>{selectedProduct?.avgRating} ratings</span>
+              <span>{selectedProduct.avgRating.toFixed(1)} ratings</span>
             </div>
             <div className="info">
-              <span className="price">${selectedProduct?.price}</span>
-              <span>category:{selectedProduct?.category}</span>
+              <span className="price">${Number(selectedProduct.price).toFixed(2)}</span>
+              <span>Category: {selectedProduct.category?.name}</span>
             </div>
-            <p>{selectedProduct?.shortDesc}</p>
+            <p>{selectedProduct.shortDesc || selectedProduct.description}</p>
             <input
               className="qty-input"
               type="number"
+              min="1"
               placeholder="Qty"
               value={quantity}
               onChange={handleQuantityChange}
