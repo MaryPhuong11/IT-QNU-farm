@@ -13,13 +13,18 @@ export const productService = {
     return response.data;
   },
 
-  getProductsByCategory: async (category) => {
-    const response = await axios.get(`${API_URL}/products/category/${category}`);
+  getProductsByCategory: async (categoryId) => {
+    const response = await axios.get(`${API_URL}/products/category/${categoryId}`);
     return response.data;
   },
 
   searchProducts: async (query) => {
     const response = await axios.get(`${API_URL}/products/search?q=${query}`);
+    return response.data;
+  },
+
+  getAllCategories: async () => {
+    const response = await axios.get(`${API_URL}/categories`);
     return response.data;
   }
 }; 
