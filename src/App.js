@@ -13,7 +13,7 @@ const Product = lazy(() => import("./pages/Product"));
 const Admin = lazy(() => import("./pages/Admin/Admin"));
 const Login = lazy(() => import("./pages/Auth/Login"));
 const Register = lazy(() => import("./pages/Auth/Register"));
-
+const Payment = lazy(() => import("./pages/Payment/Payment"));
 function App() {
   return (
     <Suspense fallback={<Loader />}>
@@ -38,6 +38,9 @@ function App() {
           <Route path="/admin" element={<Admin />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/payment" element={<Payment />} />
+          {/* <Route path="/payment/success" element={<PaymentSuccess />} />
+          <Route path="/payment/failed" element={<PaymentFailed />} /> */}
         </Routes>
         <Footer />
       </Router>

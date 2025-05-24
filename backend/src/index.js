@@ -4,6 +4,8 @@ const path = require('path');
 const prisma = require('./lib/prisma');
 
 // Import routes
+const addressRoutes = require('./routes/address');
+const paymentRoutes = require('./routes/payment');
 const productRoutes = require('./routes/product.routes');
 const categoryRoutes = require('./routes/category.routes');
 const reviewRoutes = require('./routes/review.routes');
@@ -22,6 +24,8 @@ app.use(express.urlencoded({ extended: true }));
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // Routes
+app.use('/api/addresses', addressRoutes); // Added address routes
+app.use('/api/payments', paymentRoutes); // Added payment routes
 app.use('/api/products', productRoutes);
 app.use('/api/categories', categoryRoutes);
 app.use('/api/reviews', reviewRoutes);

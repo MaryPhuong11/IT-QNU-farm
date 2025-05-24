@@ -37,7 +37,20 @@ model Product {
   @@map("products")
 }
 
+model Review {
+  id        Int     @id @default(autoincrement())
+  productId Int
+  product   Product @relation(fields: [productId], references: [id])
 
+  userId String
+  user   User   @relation(fields: [userId], references: [id])
+
+  userName  String
+  rating    Int
+  text      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+}
 
 model User {
   id       String  @id @default(uuid())
@@ -55,9 +68,73 @@ model User {
   orders   Order[]
   wishlist Wishlist[]
   reviews  Review[]
+  addresses Address[] 
 }
 
 
 
 
 
+model Wishlist {
+  id     String @id @default(uuid())
+  userId String
+  user   User   @relation(fields: [userId], references: [id])
+
+  productId Int
+  product   Product @relation(fields: [productId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, productId])
+}
+
+
+
+model Address {
+  id        String   @id @default(uuid())
+  userId    String
+  fullName  String
+  phone     String
+  province  String
+  district  String
+  ward      String
+  detail    String
+  isDefault Boolean @default(false) // Add default value here
+  user      User     @relation(fields: [userId], references: [id])
+  orders    Order[]
+}
+
+model Order {
+  id            String   @id @default(uuid())
+  userId        String
+  status        String   // pending, paid, shipping, completed, cancelled
+  totalAmount   Float
+  shippingAddress Address @relation(fields: [addressId], references: [id])
+  addressId     String
+  paymentMethod String   // cod, vnpay
+  items         OrderItem[]
+  user          User     @relation(fields: [userId], references: [id])
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model OrderItem {
+  id        String   @id @default(uuid())
+  orderId   String
+  productId Int
+  quantity  Int
+  price     Float
+  order     Order    @relation(fields: [orderId], references: [id])
+  product   Product  @relation(fields: [productId], references: [id])
+}
+
+model Voucher {
+  id            String   @id @default(uuid())
+  code          String   @unique
+  discountType  String   // percentage, fixed
+  value         Float
+  minAmount     Float?
+  expirationDate DateTime
+  isActive      Boolean  @default(true)
+}

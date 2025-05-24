@@ -3,16 +3,20 @@ import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import axios from 'axios';
 import { FaUser, FaLock, FaEye, FaEyeSlash, FaGoogle, FaFacebook } from 'react-icons/fa';
+import { useDispatch, useSelector } from 'react-redux';
+import { loginStart, loginSuccess, loginFailure } from '../../features/user/userSlice';
 import './Auth.css';
 
 const Login = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const dispatch = useDispatch();
+  const { loading, error } = useSelector((state) => state.user);
+
   const [formData, setFormData] = useState({
     email: '',
     password: ''
   });
-  const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
 
@@ -34,14 +38,10 @@ const Login = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setIsLoading(true);
+    dispatch(loginStart());
 
     try {
       const response = await axios.post('http://localhost:5000/api/auth/login', formData);
-      
-      // Save token and user data
-      localStorage.setItem('token', response.data.token);
-      localStorage.setItem('user', JSON.stringify(response.data.user));
       
       // If remember me is checked, save email
       if (rememberMe) {
@@ -50,15 +50,21 @@ const Login = () => {
         localStorage.removeItem('rememberedEmail');
       }
 
+      // Dispatch success action with user data and token
+      dispatch(loginSuccess({
+        user: response.data.user,
+        token: response.data.token
+      }));
+
       toast.success('Đăng nhập thành công!');
       
       // Redirect to the page user tried to access, or home page
       const from = location.state?.from?.pathname || '/';
       navigate(from, { replace: true });
     } catch (error) {
-      toast.error(error.response?.data?.message || 'Đăng nhập thất bại!');
-    } finally {
-      setIsLoading(false);
+      const errorMessage = error.response?.data?.message || 'Đăng nhập thất bại!';
+      dispatch(loginFailure(errorMessage));
+      toast.error(errorMessage);
     }
   };
 
@@ -126,8 +132,8 @@ const Login = () => {
             </Link>
           </div>
 
-          <button type="submit" className="btn-primary" disabled={isLoading}>
-            {isLoading ? 'Đang đăng nhập...' : 'Đăng nhập'}
+          <button type="submit" className="btn-primary" disabled={loading}>
+            {loading ? 'Đang đăng nhập...' : 'Đăng nhập'}
           </button>
         </form>
 

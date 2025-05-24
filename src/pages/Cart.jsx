@@ -1,6 +1,8 @@
 import { useEffect } from "react";
-import { Col, Container, Row } from "react-bootstrap";
+import { Col, Container, Row, Button } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 import {
   addToCart,
   decreaseQty,
@@ -10,18 +12,25 @@ import {
 const Cart = () => {
   const { cartList } = useSelector((state) => state.cart);
   const dispatch = useDispatch();
-  // middlware to localStorage
+  const navigate = useNavigate();
+
   const totalPrice = cartList.reduce(
     (price, item) => price + item.qty * item.price,
     0
   );
+
   useEffect(() => {
     window.scrollTo(0, 0);
-    // if(CartItem.length ===0) {
-    //   const storedCart = localStorage.getItem("cartItem");
-    //   setCartItem(JSON.parse(storedCart));
-    // }
   }, []);
+
+  const handleCheckout = () => {
+    if (cartList.length === 0) {
+      toast.warning("Giỏ hàng trống!");
+      return;
+    }
+    navigate("/payment");
+  };
+
   return (
     <section className="cart-items">
       <Container>
@@ -79,10 +88,18 @@ const Cart = () => {
           <Col md={4}>
             <div className="cart-total">
               <h2>Cart Summary</h2>
-              <div className=" d_flex">
+              <div className="d_flex">
                 <h4>Total Price :</h4>
                 <h3>${totalPrice}.00</h3>
               </div>
+              <Button 
+                variant="primary" 
+                className="w-100 mt-3"
+                onClick={handleCheckout}
+                disabled={cartList.length === 0}
+              >
+                Mua hàng
+              </Button>
             </div>
           </Col>
         </Row>
