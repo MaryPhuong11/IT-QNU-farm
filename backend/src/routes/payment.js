@@ -82,16 +82,14 @@ router.get('/vnpay-return', async (req, res) => {
             await prisma.order.update({
                 where: { id: result.orderCode },
                 data: {
-                    paymentStatus: 'completed',
                     status: 'processing',
-                    transactionId: result.transactionId,
                     paymentMethod: 'vnpay',
-                    paymentDate: new Date()
+                    createdAt: new Date()
                 }
             });
 
             // Redirect về trang cảm ơn
-            res.redirect(`/thank-you?orderId=${result.orderCode}`);
+            // res.redirect(`/thank-you?orderId=${result.orderCode}`);
         } catch (error) {
             console.error('Error updating order status:', error);
             res.status(500).json({
@@ -101,7 +99,7 @@ router.get('/vnpay-return', async (req, res) => {
         }
     } else {
         // Xử lý khi thanh toán thất bại
-        res.redirect(`/payment-failed?orderId=${result.orderCode}`);
+        // res.redirect(`/payment-failed?orderId=${result.orderCode}`);
     }
 });
 

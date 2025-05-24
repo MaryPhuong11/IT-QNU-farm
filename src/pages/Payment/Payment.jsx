@@ -49,16 +49,42 @@ const Payment = () => {
         items: cartList.map(item => ({
           productId: item.id,
           quantity: item.qty,
-          price: parseFloat(item.price +shippingFee)  
+          price: parseFloat(item.price)
         })),
         voucherCode: voucher?.code,
         paymentMethod: selectedMethod
       };
 
+      const amount = orderData.items.reduce((total, item) => {
+        return total + item.quantity * item.price;
+      }, 0);
+
+      
       if (selectedMethod === 'vnpay') {
-        // Tạo đơn hàng và lấy URL thanh toán VNPay
-        const response = await axios.get(`${API_URL}/payment/create-payment`, orderData);
-        window.location.href = response.data.paymentUrl;
+        // Tạo đơn hàng trước
+        const orderResponse = (await axios.post(`${API_URL}/payments/order`, orderData)).data;
+        const data = {
+          orderId: orderResponse.orderId,
+          amount: amount
+        }
+        const res = (await axios.post(`${API_URL}/payments/vnpay`, data)).data;
+        window.location.href = res.paymentUrl;
+        if (!orderResponse.data.success) {
+          throw new Error(orderResponse.data.message || 'Có lỗi xảy ra khi tạo đơn hàng');
+        }
+
+        // Sau đó tạo URL thanh toán VNPay
+        const paymentResponse = await axios.post(`${API_URL}/payments/vnpay`, {
+          orderId: orderResponse.data.orderId,
+          amount: orderResponse.data.totalAmount
+        });
+
+        if (!paymentResponse.data.success) {
+          throw new Error(paymentResponse.data.message || 'Có lỗi xảy ra khi tạo thanh toán VNPay');
+        }
+
+        // Chuyển hướng đến trang VNPay
+        window.location.href = paymentResponse.data.paymentUrl;
       } else {
         // Tạo đơn hàng COD
         const response = await axios.post(`${API_URL}/payments/order`, orderData);
@@ -72,7 +98,7 @@ const Payment = () => {
       }
     } catch (error) {
       console.error('Payment error:', error);
-      toast.error(error.response?.data?.message || 'Có lỗi xảy ra khi đặt hàng');
+      toast.error(error.response?.data?.message || error.message || 'Có lỗi xảy ra khi đặt hàng');
     } finally {
       setLoading(false);
     }

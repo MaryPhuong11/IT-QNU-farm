@@ -14,6 +14,7 @@ const Admin = lazy(() => import("./pages/Admin/Admin"));
 const Login = lazy(() => import("./pages/Auth/Login"));
 const Register = lazy(() => import("./pages/Auth/Register"));
 const Payment = lazy(() => import("./pages/Payment/Payment"));
+const VNPayCallback = lazy(() => import("./pages/Payment/VNPayCallback"));
 function App() {
   return (
     <Suspense fallback={<Loader />}>
@@ -39,6 +40,7 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/payment" element={<Payment />} />
+          <Route path="/vnpay-return" element={<VNPayCallback />} />
           {/* <Route path="/payment/success" element={<PaymentSuccess />} />
           <Route path="/payment/failed" element={<PaymentFailed />} /> */}
         </Routes>
