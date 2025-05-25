@@ -16,14 +16,19 @@ const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
 
-  useEffect(() => {
-    // Load remembered email on component mount
-    const rememberedEmail = localStorage.getItem('rememberedEmail');
-    if (rememberedEmail) {
-      setFormData(prev => ({ ...prev, email: rememberedEmail }));
-      setRememberMe(true);
-    }
-  }, []);
+
+useEffect(() => {
+  const queryParams = new URLSearchParams(window.location.search);
+  const token = queryParams.get('token');
+  const user = queryParams.get('user');
+
+  if (token) {
+    localStorage.setItem('token', token);
+    if (user) localStorage.setItem('user', JSON.stringify(JSON.parse(decodeURIComponent(user))));
+    toast.success('Đăng nhập Google thành công!');
+    navigate('/');
+  }
+}, [navigate, window.location.search]);
 
   const handleChange = (e) => {
     setFormData({
@@ -138,9 +143,12 @@ const Login = () => {
           <div className="social-login">
             <p>Hoặc đăng nhập với</p>
             <div className="social-buttons">
-              <button className="social-btn google">
+              <a
+                href="http://localhost:5000/api/auth/google"
+                className="social-btn google"
+              >
                 <FaGoogle /> Google
-              </button>
+              </a>
               <button className="social-btn facebook">
                 <FaFacebook /> Facebook
               </button>
@@ -152,4 +160,4 @@ const Login = () => {
   );
 };
 
-export default Login; 
+export default Login;

@@ -3,6 +3,8 @@ const router = express.Router();
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const prisma = require('../lib/prisma');
+const passport = require('passport');
+require('../config/passport'); // Đảm bảo đã import passport config
 
 // Register
 router.post('/register', async (req, res) => {
@@ -107,4 +109,30 @@ router.post('/login', async (req, res) => {
   }
 });
 
-module.exports = router; 
+// Route bắt đầu đăng nhập Google
+router.get(
+  '/google',
+  passport.authenticate('google', {
+    scope: ['profile', 'email'],
+    prompt: 'select_account' // Thêm dòng này
+  })
+);
+
+// Route callback từ Google
+router.get('/google/callback', passport.authenticate('google', { session: false, failureRedirect: '/' }),
+  async (req, res) => {
+    // Tạo JWT token
+    const token = jwt.sign(
+      { userId: req.user.id, role: req.user.role },
+      process.env.JWT_SECRET || 'your-secret-key',
+      { expiresIn: '7d' }
+    );
+    // Trả về frontend qua redirect (hoặc response JSON nếu là API)
+    const user = { ...req.user };
+    delete user.password;
+    // Redirect về frontend kèm token và user (dạng query string)
+    res.redirect(`${process.env.FRONTEND_URL || 'http://localhost:3000'}/login?token=${token}&user=${encodeURIComponent(JSON.stringify(user))}`);
+  }
+);
+
+module.exports = router;
