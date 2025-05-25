@@ -4,6 +4,168 @@ const prisma = require('../lib/prisma');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
+// Get all users with pagination and search
+router.get('/', async (req, res) => {
+  try {
+    const { search, page = 1, limit = 10 } = req.query;
+    const skip = (page - 1) * limit;
+
+    // Build where clause for search
+    const where = search ? {
+      OR: [
+        { name: { contains: search } },
+        { email: { contains: search } }
+      ]
+    } : {};
+
+    // Get total count for pagination
+    const total = await prisma.user.count({ where });
+
+    const users = await prisma.user.findMany({
+      where,
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        phone: true,
+        role: true,
+        avatar: true,
+        createdAt: true,
+        _count: {
+          select: {
+            orders: true
+          }
+        }
+      },
+      orderBy: {
+        createdAt: 'desc'
+      },
+      skip: parseInt(skip),
+      take: parseInt(limit)
+    });
+
+    res.json({
+      success: true,
+      users: users.map(user => ({
+        ...user,
+        orderCount: user._count.orders
+      })),
+      pagination: {
+        total,
+        page: parseInt(page),
+        limit: parseInt(limit),
+        totalPages: Math.ceil(total / limit)
+      }
+    });
+  } catch (error) {
+    console.error('Error fetching users:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Error fetching users'
+    });
+  }
+});
+
+// Get user details by ID
+router.get('/:id', async (req, res) => {
+  try {
+    const user = await prisma.user.findUnique({
+      where: { id: req.params.id },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        phone: true,
+        role: true,
+        avatar: true,
+        createdAt: true,
+        addresses: true,
+        _count: {
+          select: {
+            orders: true,
+            reviews: true,
+            wishlist: true
+          }
+        },
+        orders: {
+          take: 5,
+          orderBy: {
+            createdAt: 'desc'
+          },
+          select: {
+            id: true,
+            status: true,
+            totalAmount: true,
+            createdAt: true
+          }
+        }
+      }
+    });
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: 'User not found'
+      });
+    }
+
+    res.json({
+      success: true,
+      user: {
+        ...user,
+        orderCount: user._count.orders,
+        reviewCount: user._count.reviews,
+        wishlistCount: user._count.wishlist
+      }
+    });
+  } catch (error) {
+    console.error('Error fetching user details:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Error fetching user details'
+    });
+  }
+});
+
+// Delete user
+router.delete('/:id', async (req, res) => {
+  try {
+    const user = await prisma.user.findUnique({
+      where: { id: req.params.id }
+    });
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: 'User not found'
+      });
+    }
+
+    // Prevent deleting admin users
+    if (user.role === 'admin') {
+      return res.status(403).json({
+        success: false,
+        message: 'Cannot delete admin users'
+      });
+    }
+
+    await prisma.user.delete({
+      where: { id: req.params.id }
+    });
+
+    res.json({
+      success: true,
+      message: 'User deleted successfully'
+    });
+  } catch (error) {
+    console.error('Error deleting user:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Error deleting user'
+    });
+  }
+});
+
 // Get user profile
 router.get('/:id', async (req, res) => {
   try {

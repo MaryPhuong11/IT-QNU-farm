@@ -68,7 +68,7 @@ const ProductList = ({ products, onEdit, onDelete, isLoading }) => {
           ) : (
             <tr>
               <td colSpan="7" className="no-data">
-                No products found
+                Không tìm thấy sản phẩm nào
               </td>
             </tr>
           )}

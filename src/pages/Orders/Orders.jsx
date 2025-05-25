@@ -10,11 +10,9 @@ const API_URL = 'http://localhost:5000/api';
 
 const getStatusBadge = (status) => {
   const statusConfig = {
-    pending: { variant: 'warning', text: 'Chờ thanh toán' },
-    processing: { variant: 'info', text: 'Đang xử lý' },
-    shipping: { variant: 'primary', text: 'Đang giao hàng' },
-    completed: { variant: 'success', text: 'Hoàn thành' },
-    cancelled: { variant: 'danger', text: 'Đã hủy' }
+    pending: { variant: 'warning', text: 'Đã thanh toán' },
+    processing: { variant: 'info', text: 'Chờ thanh toán' },
+  
   };
 
   const config = statusConfig[status] || { variant: 'secondary', text: status };

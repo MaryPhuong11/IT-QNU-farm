@@ -13,6 +13,10 @@ import ProductForm from './components/Products/ProductForm';
 import CategoryList from './components/Categories/CategoryList';
 import CategoryForm from './components/Categories/CategoryForm';
 import DeleteModal from './components/Common/DeleteModal';
+import OrderList from './components/Orders/OrderList';
+import OrderDetails from './components/Orders/OrderDetails';
+import UserList from './components/Users/UserList';
+import UserDetails from './components/Users/UserDetails';
 
 const API_URL = 'http://localhost:5000/api';
 
@@ -28,11 +32,38 @@ const Admin = () => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [itemToDelete, setItemToDelete] = useState(null);
   const [deleteType, setDeleteType] = useState('');
+  const [orders, setOrders] = useState([]);
+  const [selectedOrder, setSelectedOrder] = useState(null);
+  const [showOrderDetails, setShowOrderDetails] = useState(false);
+  const [orderStatus, setOrderStatus] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [users, setUsers] = useState([]);
+  const [selectedUser, setSelectedUser] = useState(null);
+  const [showUserDetails, setShowUserDetails] = useState(false);
+  const [userSearchQuery, setUserSearchQuery] = useState('');
+  const [userCurrentPage, setUserCurrentPage] = useState(1);
+  const [userTotalPages, setUserTotalPages] = useState(1);
+  const [productSearchQuery, setProductSearchQuery] = useState('');
+  const [productCurrentPage, setProductCurrentPage] = useState(1);
+  const [productTotalPages, setProductTotalPages] = useState(1);
 
   useEffect(() => {
     fetchProducts();
     fetchCategories();
   }, []);
+
+  useEffect(() => {
+    if (activeTab === 'orders') {
+      fetchOrders();
+    }
+  }, [activeTab, orderStatus, currentPage]);
+
+  useEffect(() => {
+    if (activeTab === 'users') {
+      fetchUsers();
+    }
+  }, [activeTab, userSearchQuery, userCurrentPage]);
 
   const fetchProducts = async () => {
     try {
@@ -54,6 +85,50 @@ const Admin = () => {
     } catch (error) {
       console.error('Error fetching categories:', error);
       toast.error('Failed to fetch categories');
+    }
+  };
+
+  const fetchOrders = async () => {
+    try {
+      setIsLoading(true);
+      const response = await axios.get(`${API_URL}/payments/admin/orders`, {
+        params: {
+          status: orderStatus || undefined,
+          page: currentPage,
+          limit: 10
+        }
+      });
+      if (response.data.success) {
+        setOrders(response.data.orders);
+        setTotalPages(response.data.pagination.totalPages);
+      }
+    } catch (error) {
+      console.error('Error fetching orders:', error);
+      toast.error('Failed to fetch orders');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const fetchUsers = async () => {
+    try {
+      setIsLoading(true);
+      const response = await axios.get(`${API_URL}/users`, {
+        params: {
+          search: userSearchQuery || undefined,
+          page: userCurrentPage,
+          limit: 10
+        }
+      });
+      if (response.data.success) {
+        setUsers(response.data.users);
+        setUserTotalPages(response.data.pagination.totalPages);
+      }
+    } catch (error) {
+      console.error('Error fetching users:', error);
+      toast.error('Failed to fetch users');
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -146,6 +221,62 @@ const Admin = () => {
     }
   };
 
+  const handleViewOrderDetails = (order) => {
+    setSelectedOrder(order);
+    setShowOrderDetails(true);
+  };
+
+  const handleStatusChange = (e) => {
+    setOrderStatus(e.target.value);
+    setCurrentPage(1);
+  };
+
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+  };
+
+  const handleViewUserDetails = async (user) => {
+    try {
+      const response = await axios.get(`${API_URL}/users/${user.id}`);
+      if (response.data.success) {
+        setSelectedUser(response.data.user);
+        setShowUserDetails(true);
+      }
+    } catch (error) {
+      console.error('Error fetching user details:', error);
+      toast.error('Failed to fetch user details');
+    }
+  };
+
+  const handleDeleteUser = async (user) => {
+    try {
+      await axios.delete(`${API_URL}/users/${user.id}`);
+      toast.success('User deleted successfully');
+      fetchUsers();
+    } catch (error) {
+      console.error('Error deleting user:', error);
+      toast.error('Failed to delete user');
+    }
+  };
+
+  const handleUserSearch = (query) => {
+    setUserSearchQuery(query);
+    setUserCurrentPage(1);
+  };
+
+  const handleUserPageChange = (page) => {
+    setUserCurrentPage(page);
+  };
+
+  const handleProductSearch = (query) => {
+    setProductSearchQuery(query);
+    setProductCurrentPage(1);
+  };
+
+  const handleProductPageChange = (page) => {
+    setProductCurrentPage(page);
+  };
+
   const renderContent = () => {
     switch (activeTab) {
       case 'products':
@@ -186,16 +317,69 @@ const Admin = () => {
       case 'orders':
         return (
           <div className="orders-page">
-            <h2>Orders Management</h2>
-            <p>Coming soon...</p>
+            <div className="page-header">
+              <h2>Quản lý đơn hàng</h2>
+              <div className="filters">
+                <select
+                  value={orderStatus}
+                  onChange={handleStatusChange}
+                  className="status-filter"
+                >
+                  <option value="">Tất cả trạng thái</option>
+                  <option value="pending">Đã thanh toán</option>
+                  <option value="processing">Chờ thanh toán</option>
+                 
+                </select>
+              </div>
+            </div>
+            <OrderList
+              orders={orders}
+              onViewDetails={handleViewOrderDetails}
+              isLoading={isLoading}
+            />
+            {totalPages > 1 && (
+              <div className="pagination">
+                {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                  <button
+                    key={page}
+                    className={`page-btn ${page === currentPage ? 'active' : ''}`}
+                    onClick={() => handlePageChange(page)}
+                  >
+                    {page}
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
         );
 
       case 'users':
         return (
           <div className="users-page">
-            <h2>Users Management</h2>
-            <p>Coming soon...</p>
+            <div className="page-header">
+              <h2>Quản lý người dùng</h2>
+            </div>
+            <UserList
+              users={users}
+              onViewDetails={handleViewUserDetails}
+              onDelete={handleDeleteUser}
+              isLoading={isLoading}
+              searchQuery={userSearchQuery}
+              onSearchChange={handleUserSearch}
+            />
+            {userTotalPages > 1 && (
+              <div className="pagination">
+                {Array.from({ length: userTotalPages }, (_, i) => i + 1).map((page) => (
+                  <button
+                    key={page}
+                    className={`page-btn ${page === userCurrentPage ? 'active' : ''}`}
+                    onClick={() => handleUserPageChange(page)}
+                  >
+                    {page}
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
         );
 
@@ -243,6 +427,26 @@ const Admin = () => {
           }}
           onSubmit={handleCategorySubmit}
           category={selectedCategory}
+        />
+      )}
+
+      {showOrderDetails && (
+        <OrderDetails
+          order={selectedOrder}
+          onClose={() => {
+            setShowOrderDetails(false);
+            setSelectedOrder(null);
+          }}
+        />
+      )}
+
+      {showUserDetails && (
+        <UserDetails
+          user={selectedUser}
+          onClose={() => {
+            setShowUserDetails(false);
+            setSelectedUser(null);
+          }}
         />
       )}
 

@@ -30,7 +30,7 @@ const CategoryList = ({ categories, onEdit, onDelete }) => {
                     </button>
                     <button 
                       className="btn-delete"
-                      onClick={() => onDelete(category, 'category')}
+                      onClick={() => onDelete(category)}
                       title="Delete Category"
                     >
                       <FaTrash />

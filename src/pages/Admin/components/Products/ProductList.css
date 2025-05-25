@@ -1,3 +1,28 @@
+.products-page {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+}
+
+.search-bar {
+  margin-bottom: 20px;
+}
+
+.search-bar input {
+  width: 100%;
+  padding: 10px 16px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.search-bar input:focus {
+  outline: none;
+  border-color: #0d6efd;
+  box-shadow: 0 0 0 2px rgba(13, 110, 253, 0.25);
+}
+
 .products-table {
   overflow-x: auto;
   margin-top: 20px;
@@ -124,13 +149,6 @@
   color: white;
 }
 
-.no-data {
-  text-align: center;
-  padding: 30px;
-  color: #95a5a6;
-  font-style: italic;
-}
-
 .loading-spinner {
   display: flex;
   align-items: center;
@@ -138,6 +156,13 @@
   height: 200px;
   color: #3498db;
   font-size: 16px;
+}
+
+.no-data {
+  text-align: center;
+  padding: 30px;
+  color: #95a5a6;
+  font-style: italic;
 }
 
 /* Column widths */

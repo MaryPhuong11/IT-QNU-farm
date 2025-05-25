@@ -303,4 +303,149 @@ router.get('/orders/:userId', async (req, res) => {
     }
 });
 
+// Get all orders for admin
+router.get('/admin/orders', async (req, res) => {
+    try {
+        const { status, page = 1, limit = 10 } = req.query;
+        const skip = (page - 1) * limit;
+
+        // Build where clause
+        const where = status ? { status } : {};
+
+        // Get total count for pagination
+        const total = await prisma.order.count({ where });
+
+        const orders = await prisma.order.findMany({
+            where,
+            include: {
+                user: {
+                    select: {
+                        name: true,
+                        email: true,
+                        phone: true
+                    }
+                },
+                shippingAddress: true,
+                items: {
+                    include: {
+                        product: {
+                            select: {
+                                productName: true,
+                                imgUrl: true
+                            }
+                        }
+                    }
+                }
+            },
+            orderBy: {
+                createdAt: 'desc'
+            },
+            skip: parseInt(skip),
+            take: parseInt(limit)
+        });
+
+        res.json({
+            success: true,
+            orders: orders.map(order => ({
+                id: order.id,
+                userName: order.user.name,
+                userEmail: order.user.email,
+                userPhone: order.user.phone,
+                totalAmount: order.totalAmount,
+                paymentMethod: order.paymentMethod,
+                status: order.status,
+                createdAt: order.createdAt,
+                shippingAddress: order.shippingAddress,
+                items: order.items.map(item => ({
+                    id: item.id,
+                    productName: item.product.productName,
+                    imgUrl: item.product.imgUrl,
+                    quantity: item.quantity,
+                    price: item.price,
+                    subtotal: item.price * item.quantity
+                }))
+            })),
+            pagination: {
+                total,
+                page: parseInt(page),
+                limit: parseInt(limit),
+                totalPages: Math.ceil(total / limit)
+            }
+        });
+    } catch (error) {
+        console.error('Error fetching orders:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Lỗi khi lấy danh sách đơn hàng'
+        });
+    }
+});
+
+// Get order details by ID
+router.get('/admin/orders/:orderId', async (req, res) => {
+    try {
+        const { orderId } = req.params;
+
+        const order = await prisma.order.findUnique({
+            where: { id: orderId },
+            include: {
+                user: {
+                    select: {
+                        name: true,
+                        email: true,
+                        phone: true
+                    }
+                },
+                shippingAddress: true,
+                items: {
+                    include: {
+                        product: {
+                            select: {
+                                productName: true,
+                                imgUrl: true
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        if (!order) {
+            return res.status(404).json({
+                success: false,
+                message: 'Không tìm thấy đơn hàng'
+            });
+        }
+
+        res.json({
+            success: true,
+            order: {
+                id: order.id,
+                userName: order.user.name,
+                userEmail: order.user.email,
+                userPhone: order.user.phone,
+                totalAmount: order.totalAmount,
+                paymentMethod: order.paymentMethod,
+                status: order.status,
+                createdAt: order.createdAt,
+                shippingAddress: order.shippingAddress,
+                items: order.items.map(item => ({
+                    id: item.id,
+                    productName: item.product.productName,
+                    imgUrl: item.product.imgUrl,
+                    quantity: item.quantity,
+                    price: item.price,
+                    subtotal: item.price * item.quantity
+                }))
+            }
+        });
+    } catch (error) {
+        console.error('Error fetching order details:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Lỗi khi lấy thông tin đơn hàng'
+        });
+    }
+});
+
 module.exports = router;
