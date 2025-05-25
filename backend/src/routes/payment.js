@@ -249,4 +249,58 @@ router.get('/test-connection', (req, res) => {
     res.json({ success: true });
 });
 
+
+// Get user orders
+router.get('/orders/:userId', async (req, res) => {
+    try {
+        const { userId } = req.params;
+        
+        const orders = await prisma.order.findMany({
+            where: { userId },
+            include: {
+                items: {
+                    include: {
+                        product: {
+                            select: {
+                                productName: true,
+                                imgUrl: true
+                            }
+                        }
+                    }
+                },
+                shippingAddress: true
+            },
+            orderBy: {
+                createdAt: 'desc'
+            }
+        });
+
+        res.json({
+            success: true,
+            orders: orders.map(order => ({
+                id: order.id,
+                createdAt: order.createdAt,
+                status: order.status,
+                totalAmount: order.totalAmount,
+                paymentMethod: order.paymentMethod,
+                items: order.items.map(item => ({
+                    id: item.id,
+                    productName: item.product.productName,
+                    imgUrl: item.product.imgUrl,
+                    quantity: item.quantity,
+                    price: item.price,
+                    subtotal: item.price * item.quantity
+                })),
+                shippingAddress: order.shippingAddress
+            }))
+        });
+    } catch (error) {
+        console.error('Error fetching orders:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Lỗi khi lấy danh sách đơn hàng'
+        });
+    }
+});
+
 module.exports = router;

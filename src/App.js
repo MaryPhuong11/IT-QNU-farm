@@ -6,6 +6,7 @@ import Footer from "./components/Footer/Footer";
 import Loader from "./components/Loader/Loader";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+
 const Home = lazy(() => import("./pages/Home"));
 const Shop = lazy(() => import("./pages/Shop"));
 const Cart = lazy(() => import("./pages/Cart"));
@@ -15,6 +16,7 @@ const Login = lazy(() => import("./pages/Auth/Login"));
 const Register = lazy(() => import("./pages/Auth/Register"));
 const Payment = lazy(() => import("./pages/Payment/Payment"));
 const VNPayCallback = lazy(() => import("./pages/Payment/VNPayCallback"));
+const Orders= lazy(() => import("./pages/Orders/Orders"));
 function App() {
   return (
     <Suspense fallback={<Loader />}>
@@ -43,6 +45,7 @@ function App() {
           <Route path="/vnpay-return" element={<VNPayCallback />} />
           {/* <Route path="/payment/success" element={<PaymentSuccess />} />
           <Route path="/payment/failed" element={<PaymentFailed />} /> */}
+          <Route path="/orders" element={<Orders />} /> 
         </Routes>
         <Footer />
       </Router>
