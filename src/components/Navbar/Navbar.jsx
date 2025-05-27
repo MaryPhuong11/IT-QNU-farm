@@ -89,58 +89,26 @@ const NavBar = () => {
           </Nav>
         </Navbar.Collapse>
 
-        {/* Hiển thị avatar hoặc nút đăng nhập */}
-        <div className="d-flex align-items-center ms-3">
-          {user && user.name ? (
-  <>
-    {user.avatar && (
-      <img
-        src={user.avatar}
-        alt="Avatar"
-        style={{
-          width: 36,
-          height: 36,
-          borderRadius: "50%",
-          objectFit: "cover",
-          border: "2px solid #eee",
-          background: "#fff",
-          marginRight: 8,
-        }}
-      />
-    )}
-    <div style={{ marginRight: 8 }}>
-      <div style={{ fontWeight: 600 }}>{user.name}</div>
-      <div style={{ fontSize: 12, color: "#888" }}>{user.email}</div>
-    </div>
-    <button
-      onClick={handleLogout}
-      style={{
-        padding: "4px 12px",
-        borderRadius: 6,
-        border: "1px solid #ddd",
-        background: "#fff",
-        cursor: "pointer",
-      }}
-    >
-      Đăng xuất
-    </button>
-  </>
-) : (
-  <button
-    onClick={() => navigate("/login")}
-    style={{
-      padding: "6px 12px",
-      borderRadius: 6,
-      border: "1px solid #007bff",
-      background: "#007bff",
-      color: "#fff",
-      cursor: "pointer",
-    }}
-  >
-    Đăng nhập
-  </button>
-)}
-        </div>
+        <div className="navbar-user d-flex align-items-center ms-3">
+        {user && user.name ? (
+          <>
+            {user.avatar && (
+              <img
+                src={user.avatar}
+                alt="Avatar"
+               
+              />
+            )}
+            <div className="navbar-user-info">
+              <div className="user-name">{user.name}</div>
+             
+            </div>
+            <button onClick={handleLogout}>Đăng xuất</button>
+          </>
+        ) : (
+          <button onClick={() => navigate("/login")}>Đăng nhập</button>
+        )}
+      </div>
       </Container>
     </Navbar>
   );

@@ -70,13 +70,3 @@ const Home = () => {
 };
 
 export default Home;
-
-// Trong Google.Success.jsx hoặc Login.jsx
-const params = new URLSearchParams(window.location.search);
-const token = params.get('token');
-const user = params.get('user');
-
-if (token && user) {
-  localStorage.setItem('token', token);
-  localStorage.setItem('user', user); // user là JSON.stringify(user) từ backend
-}
