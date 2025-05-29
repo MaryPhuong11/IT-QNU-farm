@@ -66,7 +66,8 @@ router.get('/', async (req, res) => {
     const products = await prisma.product.findMany({
       include: {
         category: true,
-        reviews: true
+        reviews: true,
+        orderItems: true
       }
     });
     res.json(products);

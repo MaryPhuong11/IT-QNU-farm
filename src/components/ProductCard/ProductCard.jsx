@@ -45,7 +45,7 @@ const ProductCard = ({ title, productItem }) => {
           ))}
         </div>
         <div className="price">
-          <h4>${Number(productItem.price).toFixed(2)}</h4>
+          <h4>{Number(productItem.price).toFixed(2)} VNĐ</h4>
           <button
             aria-label="Add"
             type="submit"

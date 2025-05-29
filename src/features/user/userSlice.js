@@ -21,6 +21,7 @@ const userSlice = createSlice({
       state.isAuthenticated = true;
       state.user = action.payload.user;
       state.token = action.payload.token;
+      state.avatar = action.payload.avatar;
       state.error = null;
       // Save to localStorage
       localStorage.setItem('token', action.payload.token);
@@ -32,8 +33,10 @@ const userSlice = createSlice({
       state.isAuthenticated = false;
       state.user = null;
       state.token = null;
+      state.avatar = null;
     },
     logout: (state) => {
+      state.avatar = null;
       state.user = null;
       state.token = null;
       state.isAuthenticated = false;

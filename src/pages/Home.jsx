@@ -1,7 +1,7 @@
 import { Fragment, useEffect, useState } from "react";
 import Wrapper from "../components/wrapper/Wrapper";
 import Section from "../components/Section";
-import { products, discoutProducts } from "../utils/products";
+//import { products, discoutProducts } from "../utils/products";
 import SliderHome from "../components/Slider";
 import useWindowScrollToTop from "../hooks/useWindowScrollToTop";
 import { productService } from "../services/productService";
@@ -32,17 +32,13 @@ const Home = () => {
   }, []);
 
   // Lọc sản phẩm mới (có thể dựa vào trường createdAt hoặc isNew)
-  const newArrivalData = allProducts.filter(
-    (item) => item.isNew || item.createdAt
-  );
+  const newArrivalData = allProducts
+  .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+  .slice(0, 10);
 
-  // Lọc sản phẩm bán chạy (có thể dựa vào trường sales hoặc isBestSeller)
-  const bestSales = allProducts.filter(
-    (item) => item.isBestSeller || item.sales > 0
-  );
-
-  useWindowScrollToTop();
-
+  const bestSales = allProducts
+  .sort((a, b) => (b.orderItems?.length || 0) - (a.orderItems?.length || 0))
+  .slice(0, 10);
   if (loading) return <Loader />;
   if (error) return <div>Error: {error}</div>;
 

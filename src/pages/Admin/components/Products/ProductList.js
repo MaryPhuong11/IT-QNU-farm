@@ -29,7 +29,7 @@ const ProductList = ({ products, onEdit, onDelete, isLoading }) => {
                 <td>
                   {product.imgUrl ? (
                     <img 
-                      src={`http://localhost:5000${product.imgUrl}`} 
+                      src={`${product.imgUrl}`} 
                       alt={product.productName}
                       className="product-image"
                     />

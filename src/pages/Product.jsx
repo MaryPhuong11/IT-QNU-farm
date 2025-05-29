@@ -19,46 +19,68 @@ const Product = () => {
 
   useEffect(() => {
     const fetchProduct = async () => {
-      setLoading(true);
+      if (!id) {
+        setError("ID sản phẩm không hợp lệ");
+        setLoading(false);
+        return;
+      }
+
       try {
+        setLoading(true);
+        setError(null);
+
+        // Lấy sản phẩm chi tiết
         const product = await productService.getProductById(id);
+        console.log("Product data:", product); // Debug
+        if (!product) {
+          throw new Error("Sản phẩm không tồn tại");
+        }
         setSelectedProduct(product);
-        // Lấy tất cả sản phẩm để lọc sản phẩm liên quan
-        const allProducts = await productService.getAllProducts();
-        setRelatedProducts(
-          allProducts.filter(
+
+        // Lấy sản phẩm liên quan
+        try {
+          const allProducts = await productService.getAllProducts();
+          console.log("All products:", allProducts); // Debug
+          const related = allProducts.filter(
             (item) =>
               item.category === product.category &&
+              item.id != null &&
+              product.id != null &&
               String(item.id) !== String(product.id)
-          )
-        );
-        setLoading(false);
+          );
+          setRelatedProducts(related);
+        } catch (err) {
+          console.warn("Lỗi khi lấy sản phẩm liên quan:", err);
+          setRelatedProducts([]);
+        }
       } catch (err) {
-        setError(err.message);
-        setLoading(false);
+        console.error("Lỗi khi lấy sản phẩm:", err);
+        setError(err.message || "Có lỗi xảy ra khi tải sản phẩm");
         toast.error("Không thể tải sản phẩm");
+      } finally {
+        setLoading(false);
       }
     };
+
     fetchProduct();
-    // eslint-disable-next-line
   }, [id]);
 
   useWindowScrollToTop();
 
   if (loading) return <Loader />;
-  if (error) return <div>Error: {error}</div>;
-  if (!selectedProduct) return <div>Không tìm thấy sản phẩm</div>;
+  if (error) return <div className="text-danger text-center mt-5">Lỗi: {error}</div>;
+  if (!selectedProduct) return <div className="text-center mt-5">Không tìm thấy sản phẩm</div>;
 
   return (
     <Fragment>
-      <Banner title={selectedProduct?.productName || selectedProduct?.name} />
+      <Banner title={selectedProduct?.productName || selectedProduct?.name || "Sản phẩm"} />
       <ProductDetails selectedProduct={selectedProduct} />
       <ProductReviews selectedProduct={selectedProduct} />
-      <section className="related-products">
+      <section className="related-products my-5">
         <Container>
-          <h3>You might also like</h3>
+          <h3 className="mb-4">Bạn có thể cũng thích</h3>
+          <ShopList productItems={relatedProducts} />
         </Container>
-        <ShopList productItems={relatedProducts} />
       </section>
     </Fragment>
   );

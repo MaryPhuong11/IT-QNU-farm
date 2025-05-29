@@ -50,12 +50,24 @@ const Cart = () => {
                     <Col sm={8} md={9}>
                       <Row className="cart-content justify-content-center">
                         <Col xs={12} sm={9} className="cart-details">
-                          <h3>{item.productName}</h3>
-                          <h4>
-                            ${item.price}.00 * {item.qty}
-                            <span>${productQty}.00</span>
-                          </h4>
-                        </Col>
+                        <h3 className="mb-3">Tên sản phẩm: {item.productName}</h3>
+
+                        <div className="d-flex mb-2" style={{ gap: "40px" }}>
+                          <h5 className="mb-0">
+                            <strong>Giá:</strong> {item.price}.00 VNĐ
+                          </h5>
+                          <h5 className="mb-0">
+                            <strong>Số lượng:</strong> {item.qty}
+                          </h5>
+                        </div>
+
+                        <div className="d-flex justify-content-between align-items-center">
+                          <h5 className="mb-0">
+                            Tổng: {productQty}.00 VNĐ
+                          </h5>
+                          
+                        </div>
+                      </Col>
                         <Col xs={12} sm={3} className="cartControl">
                           <button
                             className="incCart"
@@ -87,10 +99,10 @@ const Cart = () => {
           </Col>
           <Col md={4}>
             <div className="cart-total">
-              <h2>Cart Summary</h2>
+              <h2>Tổng giá:</h2>
               <div className="d_flex">
-                <h4>Total Price :</h4>
-                <h3>${totalPrice}.00</h3>
+                
+                <h3>{totalPrice}.00 VNĐ</h3>
               </div>
               <Button 
                 variant="primary" 

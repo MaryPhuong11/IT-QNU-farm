@@ -395,10 +395,10 @@ const Admin = () => {
       <div className="admin-content">
         <header className="content-header">
           <h1>{activeTab.charAt(0).toUpperCase() + activeTab.slice(1)}</h1>
-          <div className="user-profile">
+          {/* <div className="user-profile">
             <img src="https://via.placeholder.com/40" alt="Admin" />
             <span>Admin User</span>
-          </div>
+          </div> */}
         </header>
         <main className="content-main">
           {renderContent()}

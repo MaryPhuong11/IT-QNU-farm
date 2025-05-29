@@ -45,7 +45,7 @@ const ProductDetails = ({ selectedProduct }) => {
               <span>{selectedProduct.avgRating.toFixed(1)} ratings</span>
             </div>
             <div className="info">
-              <span className="price">${Number(selectedProduct.price).toFixed(2)}</span>
+              <span className="price">{Number(selectedProduct.price).toFixed(2)} VNĐ</span>
               <span>Category: {selectedProduct.category?.name}</span>
             </div>
             <p>{selectedProduct.shortDesc || selectedProduct.description}</p>

@@ -27,7 +27,7 @@ const ProductForm = ({ isOpen, onClose, onSubmit, product, categories }) => {
         description: product.description || '',
         imgUrl: product.imgUrl || ''
       });
-      setImagePreview(product.imgUrl ? `http://localhost:5000${product.imgUrl}` : null);
+      setImagePreview(product.imgUrl ? `${product.imgUrl}` : null);
     } else {
       setFormData({
         productName: '',
@@ -59,7 +59,7 @@ const ProductForm = ({ isOpen, onClose, onSubmit, product, categories }) => {
         ...prev,
         imgUrl: response.data.imageUrl
       }));
-      setImagePreview(`http://localhost:5000${response.data.imageUrl}`);
+      setImagePreview(`${response.data.imageUrl}`);
       toast.success('Image uploaded successfully');
     } catch (error) {
       toast.error('Failed to upload image');
@@ -77,7 +77,7 @@ const ProductForm = ({ isOpen, onClose, onSubmit, product, categories }) => {
   if (!isOpen) return null;
 
   return (
-    <div className="modal-overlay">
+    <div className="modal-overlay" style={{ paddingTop: '70px' }}>
       <div className="modal-content product-form">
         <div className="modal-header">
           <h2>{product ? 'Edit Product' : 'Add New Product'}</h2>
