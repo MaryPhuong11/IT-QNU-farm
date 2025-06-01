@@ -1,12 +1,12 @@
 import { configureStore } from "@reduxjs/toolkit";
-import cartSlice, { cartMiddleware } from "./features/cart/cartSlice";
+import cartReducer, { cartMiddleware } from "./features/cart/cartSlice";
 import productReducer from '../features/products/productSlice';
 import categoryReducer from '../features/categories/categorySlice';
 //quản lý dữ liệu dùng chung giữa nhiều component một cách rõ ràng, dễ kiểm soát.
 //Tạo store với cấu hình sẵn toolkitRedux 
 export const store = configureStore({
   reducer: {
-    cart: cartSlice,
+    cart: cartReducer,
     products: productReducer,
     
     categories: categoryReducer,

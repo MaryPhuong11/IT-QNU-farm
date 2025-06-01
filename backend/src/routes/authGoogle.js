@@ -2,6 +2,7 @@ const express = require('express');
 const passport = require('passport');
 const jwt = require('jsonwebtoken');
 const router = express.Router();
+const prisma = require('../lib/prisma');
 
 // Bắt đầu đăng nhập bằng Google
 router.get('/google', passport.authenticate('google', {

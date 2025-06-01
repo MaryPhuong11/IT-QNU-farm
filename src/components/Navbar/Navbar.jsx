@@ -90,25 +90,22 @@ const NavBar = () => {
         </Navbar.Collapse>
 
         <div className="navbar-user d-flex align-items-center ms-3">
-        {user && user.name ? (
-          <>
-            {user.avatar && (
-              <img
-                src={user.avatar}
-                alt="Avatar"
-               
-              />
-            )}
-            <div className="navbar-user-info">
-              <div className="user-name">{user.name}</div>
-             
-            </div>
-            <button onClick={handleLogout}>Đăng xuất</button>
-          </>
-        ) : (
-          <button onClick={() => navigate("/login")}>Đăng nhập</button>
-        )}
-      </div>
+          {user && user.name ? (
+            <>
+              {user.avatar && (
+                <div className="avatar-wrapper me-2">
+                  <img src={user.avatar} alt="Avatar" />
+                </div>
+              )}
+              <div className="navbar-user-info me-2">
+                <div className="user-name">{user.name}</div>
+              </div>
+              <button className="logout-btn" onClick={handleLogout}>Đăng xuất</button>
+            </>
+          ) : (
+            <button className="login-btn" onClick={() => navigate("/login")}>Đăng nhập</button>
+          )}
+        </div>
       </Container>
     </Navbar>
   );

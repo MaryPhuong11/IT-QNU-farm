@@ -219,12 +219,11 @@
 .navbar-user img {
   width: 36px;
   height: 36px;
-  border-radius: 50%;
-  object-fit: cover;
-  border: 2px solid #eee;
-  background: #fff;
+  border-radius: 50%;     
+  object-fit: cover;       
   margin-right: 8px;
-  flex-shrink: 0;
+  border: 2px solid #eee;  
+  background-color: #fff;  
 }
 
 .navbar-user-info {
@@ -252,4 +251,41 @@
 
 .navbar-user button:hover {
   background: #f5f5f5;
+}
+
+.avatar-wrapper {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  overflow: hidden;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.avatar-wrapper img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.navbar-user-info .user-name {
+  font-weight: 500;
+  font-size: 14px;
+}
+
+.logout-btn,
+.login-btn {
+  background-color: transparent;
+  border: none;
+  color: #333;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.logout-btn:hover,
+.login-btn:hover {
+  text-decoration: underline;
 }

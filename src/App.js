@@ -1,4 +1,4 @@
-import { lazy, Suspense } from "react";
+import { lazy, Suspense, useEffect } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import NavBar from "./components/Navbar/Navbar";
@@ -6,6 +6,12 @@ import Footer from "./components/Footer/Footer";
 import Loader from "./components/Loader/Loader";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { useDispatch } from "react-redux";
+import { setCart } from "./app/features/cart/cartSlice";
+import { getCartFromServer } from "./app/features/cart/cartApi";
+
+
+
 const Home = lazy(() => import("./pages/Home"));
 const Shop = lazy(() => import("./pages/Shop"));
 const Cart = lazy(() => import("./pages/Cart"));
@@ -15,6 +21,25 @@ const Login = lazy(() => import("./pages/Auth/Login"));
 const Register = lazy(() => import("./pages/Auth/Register"));
 
 function App() {
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    const user = JSON.parse(localStorage.getItem('user'));
+    if (user?.id) {
+      getCartFromServer(user.id).then(serverCart => {
+        const mappedCart = (serverCart.cartList || []).map(item => ({
+          id: item.product.id,
+          productName: item.product.productName,
+          imgUrl: item.product.imgUrl,
+          price: Number(item.product.price),
+          qty: item.quantity,
+        }));
+        dispatch(setCart(mappedCart));
+        localStorage.setItem("cartList", JSON.stringify(mappedCart));
+      });
+    }
+  }, [dispatch]);
+
   return (
     <Suspense fallback={<Loader />}>
       <Router>

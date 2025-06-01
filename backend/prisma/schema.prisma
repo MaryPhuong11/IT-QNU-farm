@@ -28,8 +28,9 @@ model Product {
 
   avgRating  Float       @default(0)
   reviews    Review[]
-  orderItems OrderItem[] // Quan hệ ngược với OrderItem
-  wishlists  Wishlist[] // Quan hệ ngược với Wishlist
+  orderItems OrderItem[] 
+  wishlists  Wishlist[]
+  cartItems  CartItem[] 
 
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
@@ -62,14 +63,15 @@ model User {
   avatar    String?
   role      String   @default("user")
   provider  String?
-  googleId  String?  @unique // <- thêm @unique ở đây
+  googleId  String?  @unique
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  orders    Order[]
-  wishlist  Wishlist[]
-  reviews   Review[]
+  orders     Order[]
+  wishlist   Wishlist[]
+  reviews    Review[]
+  cart       Cart?           // <--- Thêm dòng này (1 user có 1 cart)
 }
 
 model Order {
@@ -107,4 +109,24 @@ model Wishlist {
   updatedAt DateTime @updatedAt
 
   @@unique([userId, productId])
+}
+
+model Cart {
+  id        Int      @id @default(autoincrement())
+   userId    String   @unique
+  user      User     @relation(fields: [userId], references: [id])
+  items     CartItem[]
+}
+
+model CartItem {
+  id        Int      @id @default(autoincrement())
+  cartId    Int
+  productId Int
+  quantity  Int      @default(1)
+
+  cart      Cart     @relation(fields: [cartId], references: [id])
+  product   Product  @relation(fields: [productId], references: [id])
+  // Nếu muốn truy xuất user trực tiếp từ CartItem, có thể thêm:
+  // cartUser   User   @relation(fields: [userId], references: [id])
+  @@unique([cartId, productId])
 }
