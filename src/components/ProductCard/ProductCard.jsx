@@ -3,7 +3,8 @@ import "./product-card.css";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { useDispatch } from "react-redux";
-import { addToCart } from "../../app/features/cart/cartSlice";
+import { addToCart, setCart } from "../../app/features/cart/cartSlice";
+import { addCartItemAPI, getCartFromServer } from "../../app/features/cart/cartApi";
 
 const ProductCard = ({ title, productItem }) => {
   const dispatch = useDispatch();
@@ -13,9 +14,31 @@ const ProductCard = ({ title, productItem }) => {
     router(`/shop/${productItem.id}`);
   };
 
-  const handelAdd = (productItem) => {
-    dispatch(addToCart({ product: productItem, num: 1 }));
-    toast.success("Product has been added to cart!");
+  const handelAdd = async (productItem) => {
+    const user = JSON.parse(localStorage.getItem("user"));
+    if (user?.id) {
+      // Nếu đã đăng nhập, gọi API backend
+      try {
+        await addCartItemAPI(user.id, productItem.id, 1);
+        const serverCart = await getCartFromServer(user.id);
+        const mappedCart = (serverCart.cartList || []).map(item => ({
+          id: item.product.id,
+          productName: item.product.productName,
+          imgUrl: item.product.imgUrl,
+          price: Number(item.product.price),
+          qty: item.quantity,
+        }));
+        dispatch(setCart(mappedCart));
+        localStorage.setItem("cartList", JSON.stringify(mappedCart));
+        toast.success("Product has been added to cart!");
+      } catch (err) {
+        toast.error("Add to cart failed!");
+      }
+    } else {
+      // Nếu chưa đăng nhập, dùng Redux/localStorage như cũ
+      dispatch(addToCart({ product: productItem, num: 1 }));
+      toast.success("Product has been added to cart!");
+    }
   };
 
   if (!productItem) return null;

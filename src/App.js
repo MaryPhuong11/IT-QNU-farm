@@ -1,4 +1,4 @@
-import { lazy, Suspense } from "react";
+import { lazy, Suspense, useEffect } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import NavBar from "./components/Navbar/Navbar";
@@ -6,6 +6,11 @@ import Footer from "./components/Footer/Footer";
 import Loader from "./components/Loader/Loader";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { useDispatch } from "react-redux";
+import { setCart } from "./app/features/cart/cartSlice";
+import { getCartFromServer } from "./app/features/cart/cartApi";
+
+
 
 const Home = lazy(() => import("./pages/Home"));
 const Shop = lazy(() => import("./pages/Shop"));
@@ -18,6 +23,37 @@ const Payment = lazy(() => import("./pages/Payment/Payment"));
 const VNPayCallback = lazy(() => import("./pages/Payment/VNPayCallback"));
 const Orders= lazy(() => import("./pages/Orders/Orders"));
 function App() {
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+  const user = localStorage.getItem('user');
+  if (user) {
+    try {
+      const parsedUser = JSON.parse(user);
+      if (parsedUser?.id) {
+        getCartFromServer(parsedUser.id)
+          .then(serverCart => {
+            const mappedCart = (serverCart.cartList || []).map(item => ({
+              id: item.product.id,
+              productName: item.product.productName,
+              imgUrl: item.product.imgUrl,
+              price: Number(item.product.price),
+              qty: item.quantity,
+            }));
+            dispatch(setCart(mappedCart));
+            localStorage.setItem("cartList", JSON.stringify(mappedCart));
+          })
+          .catch(error => {
+            console.error("Failed to fetch cart:", error);
+            // Hiển thị thông báo lỗi cho người dùng nếu cần
+          });
+      }
+    } catch (error) {
+      console.error("Invalid user data in localStorage:", error);
+    }
+  }
+}, [dispatch]);
+
   return (
     <Suspense fallback={<Loader />}>
       <Router>

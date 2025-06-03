@@ -28,8 +28,9 @@ model Product {
 
   avgRating  Float       @default(0)
   reviews    Review[]
-  orderItems OrderItem[] // Quan hệ ngược với OrderItem
-  wishlists  Wishlist[] // Quan hệ ngược với Wishlist
+  orderItems OrderItem[] 
+  wishlists  Wishlist[]
+  cartItems  CartItem[] 
 
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
@@ -53,14 +54,16 @@ model Review {
 }
 
 model User {
-  id       String  @id @default(uuid())
-  name     String
-  email    String  @unique
-  password String
-  phone    String?
-  address  String?
-  avatar   String?
-  role     String  @default("user")
+  id        String   @id @default(uuid())
+  name      String
+  email     String   @unique
+  password  String
+  phone     String?
+  address   String?
+  avatar    String?
+  role      String   @default("user")
+  provider  String?
+  googleId  String?  @unique
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -69,9 +72,8 @@ model User {
   wishlist Wishlist[]
   reviews  Review[]
   addresses Address[] 
+  cart       Cart?           // <--- Thêm dòng này (1 user có 1 cart)
 }
-
-
 
 
 
@@ -137,4 +139,24 @@ model Voucher {
   minAmount     Float?
   expirationDate DateTime
   isActive      Boolean  @default(true)
+
+}
+model Cart {
+  id        Int      @id @default(autoincrement())
+   userId    String   @unique
+  user      User     @relation(fields: [userId], references: [id])
+  items     CartItem[]
+}
+
+model CartItem {
+  id        Int      @id @default(autoincrement())
+  cartId    Int
+  productId Int
+  quantity  Int      @default(1)
+
+  cart      Cart     @relation(fields: [cartId], references: [id])
+  product   Product  @relation(fields: [productId], references: [id])
+  // Nếu muốn truy xuất user trực tiếp từ CartItem, có thể thêm:
+  // cartUser   User   @relation(fields: [userId], references: [id])
+  @@unique([cartId, productId])
 }

@@ -12,7 +12,6 @@ const getStatusBadge = (status) => {
   const statusConfig = {
     pending: { variant: 'warning', text: 'Đã thanh toán' },
     processing: { variant: 'info', text: 'Chờ thanh toán' },
-  
   };
 
   const config = statusConfig[status] || { variant: 'secondary', text: status };
@@ -22,7 +21,7 @@ const getStatusBadge = (status) => {
 const formatCurrency = (amount) => {
   return new Intl.NumberFormat('vi-VN', {
     style: 'currency',
-    currency: 'VND'
+    currency: 'VND',
   }).format(amount);
 };
 
@@ -33,7 +32,7 @@ const Orders = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!user) {
+    if (!user?.id) {
       navigate('/login');
       return;
     }
@@ -43,6 +42,8 @@ const Orders = () => {
         const response = await axios.get(`${API_URL}/payments/orders/${user.id}`);
         if (response.data.success) {
           setOrders(response.data.orders);
+        } else {
+          console.error('Failed to fetch orders:', response.data.message);
         }
       } catch (error) {
         console.error('Error fetching orders:', error);
@@ -143,4 +144,4 @@ const Orders = () => {
   );
 };
 
-export default Orders; 
+export default Orders;
