@@ -4,7 +4,8 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const prisma = require('../lib/prisma');
 const passport = require('passport');
-require('../config/passport'); // Đảm bảo đã import passport config
+require('../config/passport');
+const isAdmin = require('../middleware/isAdmin'); // Đảm bảo đã import passport config
 
 // Register
 router.post('/register', async (req, res) => {
@@ -82,6 +83,8 @@ router.post('/login', async (req, res) => {
       return res.status(401).json({ message: 'Email hoặc mật khẩu không đúng' });
     }
 
+    
+
     // Check password
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
@@ -117,6 +120,12 @@ router.get(
     prompt: 'select_account' // Thêm dòng này
   })
 );
+
+// Bảo vệ API chỉ admin được dùng
+router.get('/admin/users', isAdmin, async (req, res) => {
+  const users = await prisma.user.findMany();
+  res.json(users);
+});
 
 // Route callback từ Google
 router.get('/google/callback', passport.authenticate('google', { session: false, failureRedirect: '/' }),
