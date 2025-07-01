@@ -5,13 +5,14 @@ import cartSlice, { cartMiddleware } from './features/cart/cartSlice';
 import productReducer from '../features/products/productSlice';
 import categoryReducer from '../features/categories/categorySlice';
 import userReducer from '../features/user/userSlice';
-
+import storeReducer from '../features/store/storeSlice';
 // Kết hợp các reducer thành một root reducer
 const rootReducer = combineReducers({
   cart: cartSlice,
   products: productReducer,
   categories: categoryReducer,
   user: userReducer,
+  stores: storeReducer,
 });
 
 // Cấu hình persist

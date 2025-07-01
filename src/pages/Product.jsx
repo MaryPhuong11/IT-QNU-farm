@@ -31,25 +31,24 @@ const Product = () => {
 
         // Lấy sản phẩm chi tiết
         const product = await productService.getProductById(id);
-        console.log("Product data:", product); // Debug
         if (!product) {
           throw new Error("Sản phẩm không tồn tại");
         }
         setSelectedProduct(product);
 
         // Lấy sản phẩm liên quan
-        try {
-          const allProducts = await productService.getAllProducts();
-          console.log("All products:", allProducts); // Debug
-          const related = allProducts.filter(
-            (item) =>
-              item.category === product.category &&
-              item.id != null &&
-              product.id != null &&
-              String(item.id) !== String(product.id)
-          );
+         try {
+          const all = await productService.getAllProducts();
+          const currentCateId = product.categoryId ?? product.category?.id;
+          const related = all.filter((p) => {
+            const cateId = p.categoryId ?? p.category?.id;
+            return (
+              cateId === currentCateId && String(p.id) !== String(product.id)
+            );
+          });
           setRelatedProducts(related);
-        } catch (err) {
+          }
+ catch (err) {
           console.warn("Lỗi khi lấy sản phẩm liên quan:", err);
           setRelatedProducts([]);
         }

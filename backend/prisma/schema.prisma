@@ -31,7 +31,7 @@ model Product {
   orderItems OrderItem[] 
   wishlists  Wishlist[]
   cartItems  CartItem[] 
-
+  comments  Comment[]
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
 
@@ -72,6 +72,7 @@ model User {
   wishlist Wishlist[]
   reviews  Review[]
   addresses Address[] 
+  comments  Comment[]     // 👈 thêm dòng này
   cart       Cart?           // <--- Thêm dòng này (1 user có 1 cart)
 }
 
@@ -159,4 +160,32 @@ model CartItem {
   // Nếu muốn truy xuất user trực tiếp từ CartItem, có thể thêm:
   // cartUser   User   @relation(fields: [userId], references: [id])
   @@unique([cartId, productId])
+}
+model Store {
+  id        Int      @id @default(autoincrement())
+  name      String
+  address   String
+  city      String
+  district  String
+  ward      String
+  phone     String
+  openTime  String
+  closeTime String
+  latitude  Float
+  longitude Float
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+}
+
+model Comment {
+  id        Int      @id @default(autoincrement()) // Vì cột id trong DB là int AI
+  text      String   // đổi từ `content` sang `text` để đúng với DB
+  productId Int
+  userId    String?
+  parentId  Int?      // có trong DB
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  product   Product   @relation(fields: [productId], references: [id])
+  user      User?     @relation(fields: [userId], references: [id])
 }

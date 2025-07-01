@@ -31,6 +31,7 @@ router.get('/', async (req, res) => {
         role: true,
         avatar: true,
         createdAt: true,
+        address :true,
         _count: {
           select: {
             orders: true
@@ -79,7 +80,7 @@ router.get('/:id', async (req, res) => {
         role: true,
         avatar: true,
         createdAt: true,
-        addresses: true,
+        address: true,
         _count: {
           select: {
             orders: true,

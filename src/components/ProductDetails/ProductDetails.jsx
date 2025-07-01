@@ -2,8 +2,7 @@ import { useState } from "react";
 import { Col, Container, Row } from "react-bootstrap";
 import { useDispatch } from "react-redux";
 import { toast } from "react-toastify";
-import { addToCart, setCart } from "../../app/features/cart/cartSlice";
-import { addCartItemAPI, getCartFromServer } from "../../app/features/cart/cartApi";
+import { addToCart } from "../../app/features/cart/cartSlice";
 import "./product-details.css";
 
 const ProductDetails = ({ selectedProduct }) => {
@@ -11,34 +10,12 @@ const ProductDetails = ({ selectedProduct }) => {
   const [quantity, setQuantity] = useState(1);
 
   const handleQuantityChange = (e) => {
-    setQuantity(Number(e.target.value));
+    setQuantity(e.target.value);
   };
 
-  const handelAdd = async (selectedProduct, quantity) => {
-    const user = JSON.parse(localStorage.getItem("user"));
-    if (user?.id) {
-      // Nếu đã đăng nhập, gọi API backend
-      try {
-        await addCartItemAPI(user.id, selectedProduct.id, Number(quantity));
-        const serverCart = await getCartFromServer(user.id);
-        const mappedCart = (serverCart.cartList || []).map(item => ({
-          id: item.product.id,
-          productName: item.product.productName,
-          imgUrl: item.product.imgUrl,
-          price: Number(item.product.price),
-          qty: item.quantity,
-        }));
-        dispatch(setCart(mappedCart));
-        localStorage.setItem("cartList", JSON.stringify(mappedCart));
-        toast.success("Product has been added to cart!");
-      } catch (err) {
-        toast.error("Add to cart failed!");
-      }
-    } else {
-      // Nếu chưa đăng nhập, dùng Redux/localStorage như cũ
-      dispatch(addToCart({ product: selectedProduct, num: Number(quantity) }));
-      toast.success("Product has been added to cart!");
-    }
+  const handelAdd = (selectedProduct, quantity) => {
+    dispatch(addToCart({ product: selectedProduct, num: quantity }));
+    toast.success("Product has been added to cart!");
   };
 
   if (!selectedProduct) return null;
@@ -65,7 +42,7 @@ const ProductDetails = ({ selectedProduct }) => {
                   ></i>
                 ))}
               </div>
-              <span>{selectedProduct.avgRating?.toFixed(1) || 0} ratings</span>
+              <span>{selectedProduct.avgRating.toFixed(1)} ratings</span>
             </div>
             <div className="info">
               <span className="price">{Number(selectedProduct.price).toFixed(2)} VNĐ</span>

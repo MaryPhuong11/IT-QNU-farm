@@ -36,28 +36,15 @@ import watchSlide from "../Images/watch-07.png";
 export const SliderData = [
   {
       id: 1,
-      title: "50% Off For Your First Shopping",
-      desc: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quis lobortis consequat eu, quam etiam at quis ut convallis.",
-      cover: sofaSlide,
+      title: "Rau Củ Tươi Sạch – Chất Lượng Là Ưu Tiên Hàng Đầu",
+      cover: `https://media3-og.scdn.vn/og/2025/06_03/oZeBu2F279RyTBn4PWHo.png`,
   },
   {
       id: 2,
-      title: "50% Off For Your First Shopping",
-      desc: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quis lobortis consequat eu, quam etiam at quis ut convallis.",
-      cover: phone08,
+      title: "Cam Kết 100% Rau Củ Tươi Ngon – Đạt Chuẩn An Toàn Thực Phẩm",
+      cover: `https://media3-og.scdn.vn/og/2025/02_13/mXIMw1EhzH9fSSIkHjtT.png`,
   },
-  {
-      id: 3,
-      title: "50% Off For Your First Shopping",
-      desc: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quis lobortis consequat eu, quam etiam at quis ut convallis.",
-      cover: wireless01,
-  },
-  {
-      id: 4,
-      title: "50% Off For Your First Shopping",
-      desc: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quis lobortis consequat eu, quam etiam at quis ut convallis.",
-      cover: watchSlide,
-  },
+  
 ];
 
 export const serviceData = [

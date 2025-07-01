@@ -11,6 +11,10 @@ const NavBar = () => {
   const [isFixed, setIsFixed] = useState(false);
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  
+  const handleClick = () => {
+    navigate("/userinfo"); // Chuyển hướng nội bộ
+  };
   // Scroll handler
   useEffect(() => {
     const scrollHandler = () => {
@@ -124,7 +128,7 @@ const NavBar = () => {
           </Nav>
         </Navbar.Collapse>
 
-        <div className="navbar-user d-flex align-items-center ms-3">
+        <div className="navbar-user d-flex align-items-center ms-3" onClick={handleClick} style={{ cursor: "pointer" }}>
           {user2 && user2.name ? (
             <>
               {user2.avatar && (
@@ -132,9 +136,9 @@ const NavBar = () => {
                   <img src={user2.avatar} alt="Avatar" />
                 </div>
               )}
-              <div className="navbar-user-info me-2">
-                <div className="user-name">{user2.name}</div>
-              </div>
+              <div className="navbar-user-info me-2" onClick={handleClick} style={{ cursor: "pointer" }}>
+      <div className="user-name">{user2.name}</div>
+    </div>
               <button className="logout-btn" onClick={handleLogout}>Đăng xuất</button>
             </>
           ) : (

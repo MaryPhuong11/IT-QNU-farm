@@ -16,7 +16,10 @@ const userRoutes = require('./routes/user.routes');
 const authRoutes = require('./routes/auth.routes');
 const authGoogleRoutes = require('./routes/authGoogle');
 const cartRoutes = require('./routes/cart.routes');
-
+const storeRoutes = require('./routes/store');
+const areaRoutes = require('./routes/area');
+const uploadRouter = require("./routes/upload.router");
+const commentRoutes = require('./routes/comment.routes');
 // Create Express app
 const app = express();
 
@@ -25,10 +28,11 @@ app.use(cors({
   origin: 'http://localhost:3000', // React frontend
   credentials: true               // Cho phép gửi cookie
 }));
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use('/api/cart', cartRoutes);
-
+app.use('/api/comments', commentRoutes);
 // Serve static files from uploads directory
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
@@ -42,12 +46,17 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 
+app.use("/api/upload", uploadRouter);
+
 // Routes
 app.use('/api/addresses', addressRoutes); // Added address routes
 app.use('/api/payments', paymentRoutes); // Added payment routes
 app.use('/api/products', productRoutes);
 app.use('/api/categories', categoryRoutes);
 app.use('/api/reviews', reviewRoutes);
+//Map
+app.use('/api/stores', storeRoutes);
+app.use('/api/area', areaRoutes);
 //app.use('/api', userRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes); 

@@ -12,7 +12,7 @@ const Footer = () => {
                   <ion-icon name="bag"></ion-icon>
                   <h1>Multimart</h1>
               </div>
-              <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Auctor libero id et, in gravida. Sit diam duis mauris nulla cursus. Erat et lectus vel ut sollicitudin elit at amet.</p>
+<p>We are committed to delivering fresh and clean vegetables every day, carefully selected from trusted farms. All products meet food safety standards, are free from harmful chemicals, and ensure top quality for the health of your family.</p>
             </Col>
             <Col md={3} sm={5} className='box'>
               <h2>About Us</h2>

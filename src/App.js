@@ -9,6 +9,8 @@ import "react-toastify/dist/ReactToastify.css";
 import { useDispatch } from "react-redux";
 import { setCart } from "./app/features/cart/cartSlice";
 import { getCartFromServer } from "./app/features/cart/cartApi";
+import StoreList from './components/StoreList';
+import StoreDetail from './components/StoreDetail';
 
 
 
@@ -22,6 +24,13 @@ const Register = lazy(() => import("./pages/Auth/Register"));
 const Payment = lazy(() => import("./pages/Payment/Payment"));
 const VNPayCallback = lazy(() => import("./pages/Payment/VNPayCallback"));
 const Orders= lazy(() => import("./pages/Orders/Orders"));
+const UserInfo= lazy(()=> import("./components/UserInfo"));
+
+const UserInfoWrapper = () => {
+  const user = JSON.parse(localStorage.getItem("user"));
+  if (!user?.id) return <p className="text-center py-4">Vui lòng đăng nhập.</p>;
+  return <UserInfo userId={user.id} />;
+};
 function App() {
   const dispatch = useDispatch();
 
@@ -79,9 +88,10 @@ function App() {
           <Route path="/register" element={<Register />} />
           <Route path="/payment" element={<Payment />} />
           <Route path="/vnpay-return" element={<VNPayCallback />} />
-          {/* <Route path="/payment/success" element={<PaymentSuccess />} />
-          <Route path="/payment/failed" element={<PaymentFailed />} /> */}
+          <Route path="/store" element={<StoreList />} />
+          <Route path="/store/:id" element={<StoreDetail />} />
           <Route path="/orders" element={<Orders />} /> 
+          <Route path="/userinfo" element={<UserInfoWrapper />} />
         </Routes>
         <Footer />
       </Router>
